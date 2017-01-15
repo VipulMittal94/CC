@@ -34,10 +34,36 @@ var octopus = {
 		model.currentcat = model.cats[0];
 		view.init();
 		list.init();
+		this.hide();
+		admin.init();
 	},
 	increase: function(){
 		model.currentcat.count++;
 		view.render();
+	},
+	change: function(newcat){
+		var cat = model.cats;
+
+		for(var i = 0; i<cat.length; i++)
+		{
+			if(cat[i] === model.currentcat){
+				cat[i].name = newcat.name;
+				cat[i].count = newcat.count;
+				cat[i].imgurl = newcat.imgurl;
+				model.currentcat = newcat;
+				list.render();
+				view.render();
+				admin.render(false);
+			}
+
+		}
+
+	},
+	hide : function(){
+		document.getElementById('cname').value ="";
+		document.getElementById('ccount').value ="";
+		document.getElementById('csrc').value ="";
+		document.getElementById('admindiv').style.visibility = "hidden";
 	}
 };
 var view = {
@@ -49,6 +75,7 @@ var view = {
 		
 		this.caturl.addEventListener('click',function(){
 			octopus.increase();
+			admin.render(false);
 		});
 		this.render();
 	},
@@ -73,17 +100,52 @@ var  list = {
 			e.textContent = cats[i].name;
 			
 			e.addEventListener('click',(function(cat){
-				return a();
-			})(cats));
+				return function() {
+					console.log(cat);
+					model.currentcat = cat;
+					view.render();
+					octopus.hide();
+				};
+			})(cat));
 			
 			this.catlist.append(e);
 		}
+	},
+	remove: function(){
+		document.getElementById('d1').removeAttribute('div');
 	}
 };
-function a(){
-	model.currentcat = cat;
-	view.render();
-}
+
+var admin = {
+	init : function(){
+		this.adminbtn = document.getElementById('admin');
+		this.admindiv = document.getElementById('admindiv');
+		this.adminbtn.addEventListener('click',function(){
+			admin.render(true);
+		})
+	},
+	render: function(a){
+		var current = model.currentcat;
+		if(a == false){
+			this.admindiv.style.visibility = 'hidden';
+		}
+		else{
+			this.admindiv.style.visibility = 'visible';
+			this.save = document.getElementById('save');
+			this.cncl = document.getElementById('cancel');
+			this.save.addEventListener('click',function(event){
+				event.preventDefault();
+				var newCat = {
+					name : document.getElementById('cname').value,
+					count : document.getElementById('ccount').value,
+					imgurl : document.getElementById('csrc').value
+				};
+				console.log(newCat);
+				octopus.change(newCat);
+			});
+		}
+		}	
+		};
 
 octopus.init();
 
