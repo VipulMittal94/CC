@@ -32,8 +32,8 @@ var model ={
 var octopus = {
 	init: function(){
 		model.currentcat = model.cats[0];
-		view.init();
 		list.init();
+		view.init();
 		this.hide();
 		admin.init();
 	},
@@ -94,6 +94,7 @@ var  list = {
 	},
 	render: function() {
 		var cats = model.cats;
+		this.catlist.innerHTML = '';
 		for(var i = 0;i<cats.length;i++){
 			var cat = cats[i];
 			var e = document.createElement('div');
@@ -108,7 +109,7 @@ var  list = {
 				};
 			})(cat));
 			
-			this.catlist.append(e);
+			this.catlist.appendChild(e);
 		}
 	},
 	remove: function(){
